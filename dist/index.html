@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="CyberPi의 구조와 입력·출력 동작을 살펴보는 교육용 3D 기기 탐색 페이지입니다.">
+  <title>CyberPi · 3D 기기 탐색</title>
+  <link rel="stylesheet" href="./style.css">
+  <script type="importmap">
+    {"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/addons/"}}
+  </script>
+</head>
+<body>
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="icon-cube" viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9Z M4 7.5l8 4.5 8-4.5M12 12v9"/></symbol>
+    <symbol id="icon-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1.8 7.3M4 4v6h6"/></symbol>
+    <symbol id="icon-rotate" viewBox="0 0 24 24"><path d="m17 4 4 4-4 4M21 8H9a6 6 0 0 0 0 12h3M7 20l-4-4 4-4"/></symbol>
+    <symbol id="icon-top" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 10h16M10 10v10"/></symbol>
+    <symbol id="icon-camera" viewBox="0 0 24 24"><path d="M8 6 9.5 3h5L16 6h4a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z"/><circle cx="12" cy="12.5" r="4"/></symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+    <symbol id="icon-light" viewBox="0 0 24 24"><path d="M9 17v-1a6 6 0 1 1 6 0v1M9 20h6M10 23h4M12 1v2M3 5l2 2M1 12h2M21 12h2M19 7l2-2"/></symbol>
+    <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="icon-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/></symbol>
+    <symbol id="icon-sound" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4Z M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></symbol>
+    <symbol id="icon-level" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <header class="masthead">
+      <div class="brand-lockup">
+        <div class="brand-symbol"><svg aria-hidden="true"><use href="#icon-cube"/></svg></div>
+        <div>
+          <p class="eyebrow">IoT LEARNING STUDIO</p>
+          <div class="title-row"><h1>CyberPi</h1><span class="title-divider" aria-hidden="true"></span><p>3D 기기 탐색</p></div>
+        </div>
+      </div>
+      <div class="header-note"><span class="note-line" aria-hidden="true"></span><span>보고, 조작하고, 동작을 이해합니다.</span></div>
+    </header>
+
+    <main>
+      <section id="workspace" class="workspace" aria-label="CyberPi 3D 탐색과 실습">
+        <div class="viewer-column">
+          <div class="viewer-topbar">
+            <div class="view-switch" role="group" aria-label="보기 모드">
+              <button id="view-model" class="view-button active" type="button" aria-pressed="true">기기 탐색</button>
+              <button id="view-demo" class="view-button" type="button" aria-pressed="false">사용법 시연</button>
+              <button id="view-game" class="view-button" type="button" aria-pressed="false">기울기 게임</button>
+            </div>
+            <span class="model-badge" id="model-badge">교육용 재구성 모델</span>
+          </div>
+
+          <div id="scene-shell" class="scene-shell">
+            <canvas id="viewport" aria-label="마우스로 회전하고 확대할 수 있는 CyberPi 3D 모델" tabindex="0"></canvas>
+            <div class="scene-caption" aria-hidden="true"><span>CYBERPI</span><span>DEVICE EXPLORER</span></div>
+            <div class="camera-tools" role="group" aria-label="카메라 조작">
+              <button id="reset-view" class="icon-button" type="button" title="처음 시점" aria-label="처음 시점으로 복원"><svg aria-hidden="true"><use href="#icon-reset"/></svg><span>처음</span></button>
+              <button id="auto-rotate" class="icon-button" type="button" title="자동 회전" aria-label="자동 회전" aria-pressed="false"><svg aria-hidden="true"><use href="#icon-rotate"/></svg><span>회전</span></button>
+              <button id="top-view" class="icon-button" type="button" title="정면 보기" aria-label="기기 정면 보기"><svg aria-hidden="true"><use href="#icon-top"/></svg><span>정면</span></button>
+            </div>
+            <div id="loading" class="loading-state" role="status"><span class="loading-orbit" aria-hidden="true"></span><strong>CyberPi를 불러오고 있습니다</strong><span>잠시 후 3D 모델을 살펴보실 수 있습니다.</span></div>
+            <div class="scene-guidance"><span class="mouse-glyph" aria-hidden="true"></span><span>드래그로 회전 · 휠 또는 두 손가락으로 확대</span></div>
+            <div class="scene-watermark" aria-hidden="true">INPUT / PROCESS / OUTPUT</div>
+            <div id="lcd-window" class="lcd-window" hidden>
+              <div class="lcd-head"><span>LCD 128 × 128 모의 화면</span><span id="lcd-mode" class="lcd-mode">전원 대기</span></div>
+              <div class="lcd-bezel">
+                <canvas id="lcd" width="384" height="384" role="img" aria-label="SPACE DODGE 예제의 CyberPi LCD 모의 실행 화면"></canvas>
+                <div id="lcd-idle" class="lcd-idle"><strong>프로그램 정지</strong><span>프로그램 실행을 누르면<br>LCD에 실행 화면이 나타납니다.</span></div>
+              </div>
+              <p class="lcd-note">이 모의 화면의 좌표: 왼쪽 위&nbsp;(0,&nbsp;0) · 오른쪽 아래&nbsp;(128,&nbsp;128)</p>
+            </div>
+          </div>
+
+          <div id="game-controls" class="game-controls" hidden>
+            <button id="game-run" class="primary-button" type="button" aria-pressed="false"><svg aria-hidden="true"><use href="#icon-play"/></svg><span>프로그램 실행</span></button>
+            <button id="game-a" class="action-button game-a" type="button" aria-pressed="false" title="A 키 또는 스페이스"><span class="keycap">A</span><span>A 버튼</span></button>
+            <div class="tilt-control">
+              <div class="timeline-heading"><label for="game-roll">기울기 · get_roll()</label><span id="game-roll-value">0°</span></div>
+              <input id="game-roll" type="range" min="-90" max="90" step="1" value="0" aria-describedby="game-roll-help">
+              <div id="game-roll-help" class="range-labels"><span>← 왼쪽 기울임</span><span>오른쪽 기울임 →</span></div>
+            </div>
+            <div class="game-toggles">
+              <button id="game-level" class="secondary-button" type="button" title="기울기 0°로 복원"><svg aria-hidden="true"><use href="#icon-level"/></svg><span>수평</span></button>
+              <button id="game-sound" class="secondary-button" type="button" aria-pressed="true" title="효과음 켜기·끄기"><svg aria-hidden="true"><use href="#icon-sound"/></svg><span>효과음</span></button>
+            </div>
+          </div>
+
+          <div id="timeline-panel" class="timeline-panel">
+            <button id="demo-play" class="primary-button" type="button"><svg aria-hidden="true"><use href="#icon-play"/></svg><span>사용법 시연</span></button>
+            <div class="timeline-track">
+              <div class="timeline-heading"><label for="progress">조작 순서 살펴보기</label><span id="timeline-label">시연 준비</span></div>
+              <input id="progress" type="range" min="0" max="100" step="0.1" value="0" aria-label="사용법 시연 위치">
+            </div>
+          </div>
+          <p class="simulation-note"><span class="simulation-mark" aria-hidden="true">i</span><span id="simulation-text">교육용 동작 시각화 · 실제 기기 미연결</span></p>
+        </div>
+
+        <aside id="game-panel" class="explore-panel game-panel" aria-label="기울기 게임 코드와 변수" hidden>
+          <div class="panel-intro"><span class="eyebrow">2주차 실습 4 · 스프라이트 + 기울기 센서 + 사운드</span><h2>SPACE DODGE</h2><p>CyberPi를 기울여 우주선을 움직이고 떨어지는 운석을 피하는 예제입니다. LCD 화면, 실행 중인 코드 위치, 변수 값을 함께 확인합니다.</p></div>
+
+          <section class="game-vars" aria-labelledby="vars-heading">
+            <div class="section-heading"><h3 id="vars-heading" class="section-label">변수 값</h3><span id="game-phase" class="phase-badge" data-phase="stopped">정지</span></div>
+            <dl class="var-grid">
+              <div><dt>angle</dt><dd id="var-angle">-</dd></div>
+              <div><dt>speed</dt><dd id="var-speed">-</dd></div>
+              <div><dt>x</dt><dd id="var-x">-</dd></div>
+              <div><dt>rock y</dt><dd id="var-rock">-</dd></div>
+              <div class="var-score"><dt>score</dt><dd id="var-score">-</dd></div>
+            </dl>
+          </section>
+
+          <section class="game-code-section" aria-labelledby="code-heading">
+            <div class="section-heading"><h3 id="code-heading" class="section-label">실행 코드</h3><button id="game-copy" class="text-button" type="button">코드 복사</button></div>
+            <div id="game-code" class="code-view" tabindex="0" aria-label="SPACE DODGE 파이썬 코드, 실행 중인 줄 강조"></div>
+          </section>
+
+          <p class="control-help">조작: ← → 키 또는 기울기 슬라이더 · A 키나 스페이스는 A 버튼 · 3D 모델의 A 버튼 클릭도 가능</p>
+          <div id="game-status" class="status-line" role="status" aria-live="polite">프로그램 실행을 누르면 예제가 시작됩니다.</div>
+        </aside>
+
+        <aside id="explore-panel" class="explore-panel" aria-label="부품 설명 및 실습 조작">
+          <div class="panel-intro"><span class="eyebrow">EXPLORE THE DEVICE</span><h2>기기를 알아보세요</h2><p>부품을 선택하고 입력과 출력의 관계를 살펴보세요.</p></div>
+
+          <section class="part-section" aria-labelledby="part-heading">
+            <h3 id="part-heading" class="section-label">부품 선택</h3>
+            <div id="part-list" class="part-list" role="group" aria-label="기기 부품"></div>
+          </section>
+
+          <section class="part-detail" aria-live="polite" aria-atomic="true">
+            <span class="detail-kicker">선택한 부품</span><h3 id="part-name">CyberPi</h3><p id="part-description">모델을 불러온 뒤 부품을 선택하면 설명을 확인할 수 있습니다.</p>
+          </section>
+
+          <section class="control-section" aria-labelledby="exploded-heading">
+            <div class="section-heading"><h3 id="exploded-heading" class="section-label">구조 펼쳐 보기</h3><span class="section-hint">외형 탐색</span></div>
+            <input id="explode" type="range" min="0" max="1" step="0.01" value="0" aria-label="부품 사이 간격">
+            <div class="range-labels" aria-hidden="true"><span>모으기</span><span>펼치기</span></div>
+          </section>
+
+          <section class="control-section led-section" aria-labelledby="led-heading">
+            <div class="section-heading"><h3 id="led-heading" class="section-label">버튼 입력 · LED 출력</h3><svg class="section-icon" aria-hidden="true"><use href="#icon-light"/></svg></div>
+            <div class="led-buttons"><button id="led-on" class="action-button" type="button"><span class="keycap">A</span><span>LED 켜기</span></button><button id="led-off" class="action-button" type="button"><span class="keycap">B</span><span>LED 끄기</span></button></div>
+            <p class="control-help">예제 프로그램의 동작을 화면에서 확인합니다.</p>
+          </section>
+
+          <div id="status" class="status-line" role="status" aria-live="polite">3D 모델을 준비하고 있습니다.</div>
+
+          <div class="export-actions"><button id="snapshot" class="secondary-button" type="button"><svg aria-hidden="true"><use href="#icon-camera"/></svg><span>화면 저장</span></button><button id="download-model" class="secondary-button" type="button"><svg aria-hidden="true"><use href="#icon-download"/></svg><span>모델 저장</span></button></div>
+        </aside>
+      </section>
+
+      <details class="sources-panel">
+        <summary><span class="source-summary-title"><svg aria-hidden="true"><use href="#icon-cube"/></svg><span>모델·영상 출처</span></span><span class="source-summary-help">원본 자료와 제작 범위 확인<svg aria-hidden="true"><use href="#icon-chevron"/></svg></span></summary>
+        <div class="sources-content"><p>원본 자료와 이 페이지에서 추가한 설명·동작을 구분해 기록합니다. 실제 기기의 작동은 해당 프로그램과 실물 실험으로 확인해 주세요.</p><div id="source-list" class="source-list"></div></div>
+      </details>
+    </main>
+    <footer class="footer"><span>CyberPi · Interactive Learning</span><span>실물과 연결되는 이해를 위한 3D 학습 자료</span></footer>
+  </div>
+  <noscript><div class="noscript-message">3D 탐색을 사용하려면 브라우저에서 JavaScript를 허용해 주세요.</div></noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "cyberpi-3d-learning-source",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CyberPi educational 3D source viewer with documented provenance",
+  "scripts": { "start": "node tools/serve.mjs", "check": "node --check dist/app.js && node tools/check.mjs" },
+  "dependencies": { "three": "0.180.0" }
+}
