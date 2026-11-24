@@ -226,7 +226,7 @@ function updateGameTilt(dt) {
 }
 function layoutGame() {
   const shell=$('scene-shell');
-  shell.classList.toggle('lcd-stack',shell.clientWidth<820);
+  shell.classList.toggle('lcd-stack',shell.clientWidth<680);
   const stacked=shell.classList.contains('lcd-stack');
   const available=stacked?Math.min(shell.clientWidth-40,420):Math.min(shell.clientWidth*.6-72,shell.clientHeight-118);
   const size=game.fit(available);

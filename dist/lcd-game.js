@@ -563,13 +563,15 @@ export function createSpaceDodge({canvas, onPresent, onLine, onVars}) {
     setButton(key, down) { input[key] = Boolean(down); },
     setRoll(degrees) { input.roll = Math.max(-180, Math.min(180, Number(degrees) || 0)); },
     setMuted(muted) { sound.setMuted(muted); },
-    // 화면에 보일 CSS 크기(px)에 맞춰 LCD 1픽셀이 기기 픽셀 정수배가 되도록 해상도를 고릅니다.
+    // 주어진 CSS 크기(px)를 채우고, LCD 1픽셀이 기기 픽셀 정수배에 가장 가깝도록 내부 해상도를 고릅니다.
+    // 정확히 맞으면 픽셀 경계를 그대로, 아니면 부드럽게 확대·축소해 표시합니다.
     fit(available) {
       const dpr = window.devicePixelRatio || 1;
-      const next = Math.max(2, Math.min(8, Math.floor(available * dpr / LCD)));
+      const css = Math.max(180, Math.floor(available));
+      const next = Math.max(2, Math.min(8, Math.round(css * dpr / LCD)));
       if (next !== scale) { scale = next; canvas.width = canvas.height = LCD * scale; }
-      const css = Math.min(LCD * scale / dpr, Math.max(180, available));
       canvas.style.width = canvas.style.height = css + 'px';
+      canvas.style.imageRendering = Math.abs(css * dpr - LCD * scale) < 1 ? 'pixelated' : 'auto';
       draw();
       return css;
     },

@@ -11,7 +11,7 @@
 @media(max-width:540px){.view-button,.primary-button,.timeline-heading label{font-size:.875rem}.model-badge{font-size:.75rem}.scene-guidance{font-size:.75rem}.timeline-panel{align-items:flex-start}.primary-button{margin-top:5px}.simulation-note{font-size:.8125rem}.panel-intro p,.sources-content>p{font-size:.875rem}}
 /* 기울기 게임 · LCD 모의 실행 */
 .workspace.game-mode{grid-template-columns:minmax(0,1fr) 420px}
-.scene-shell.game-mode{min-height:clamp(500px,calc(100vh - 330px),700px);background:radial-gradient(ellipse at 74% 45%,#fbfdff 0%,#eef4f9 58%,#e2eaf1 100%)}
+.scene-shell.game-mode{min-height:clamp(430px,calc(100vh - 340px),700px);background:radial-gradient(ellipse at 74% 45%,#fbfdff 0%,#eef4f9 58%,#e2eaf1 100%)}
 .scene-shell.game-mode .scene-caption,.scene-shell.game-mode .scene-guidance,.scene-shell.game-mode .scene-watermark{display:none}
 .scene-shell.game-mode #viewport{left:var(--lcd-col,56%);width:calc(100% - var(--lcd-col,56%))}
 .lcd-window{position:absolute;left:0;top:0;bottom:0;width:var(--lcd-col,56%);z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;padding:20px 10px 20px 24px}
@@ -63,6 +63,7 @@
 .scene-shell.game-mode.lcd-stack .lcd-window{position:relative;inset:auto;width:auto;padding:20px 14px 4px;order:-1}
 .scene-shell.game-mode.lcd-stack #viewport{position:relative;inset:auto;width:100%;height:270px}
 .scene-shell.game-mode.lcd-stack .camera-tools{display:none}
+@media(max-width:1450px){.workspace.game-mode{grid-template-columns:minmax(0,1fr) 380px}}
 @media(max-width:1150px){.workspace.game-mode{grid-template-columns:minmax(0,1fr) 340px}.var-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:860px){.workspace.game-mode{grid-template-columns:minmax(0,1fr)}.explore-panel.game-panel{contain:none}.code-view{flex:none;height:420px}.var-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
 @media(max-width:540px){.viewer-topbar{flex-wrap:wrap}.game-controls{padding:15px 14px 12px;gap:12px}.game-controls .primary-button{flex:1}.game-a{flex:1}.var-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
