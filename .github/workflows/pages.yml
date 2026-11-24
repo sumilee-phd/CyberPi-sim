@@ -1,4 +1,6 @@
 # dist/ 폴더를 GitHub Pages로 배포합니다.
+# 업로드와 배포를 같은 작업에서 연달아 실행하면 배포 단계가 방금 올린 결과물을 찾지 못하는 일이 있어
+# build(업로드)와 deploy(배포)를 별도 작업으로 나눴습니다.
 name: Deploy Pages
 
 on:
@@ -14,19 +16,24 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4
